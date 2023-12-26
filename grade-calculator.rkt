@@ -406,7 +406,7 @@ https://github.com/grazomarin
         (make-section "Midterm 2" 20 0 (list 88))
         (make-section "Final" 30 0 (list 74)))))
 
-#;
-.
+
+
                                   
         
