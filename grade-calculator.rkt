@@ -17,27 +17,27 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;   INPUT   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(@htdd Grade)
-;; Grade is type-of Number
-;; CONSTRAINT: grade is a number between [0, 100]
+(@htdd Percentage)
+;; Percentage is type-of Number
+;; CONSTRAINT: Percentage is a number between [0, 100]
 
 (define TEST1 55)
 (define TEST2 97)
 (define AVERAGE 77.7)
 
-;; (listof Grade)
+;; (listof Percentage)
 (define (fn-for-log log)
   (cond [(empty? log) ...]
         [else (... (first log)
                    (fn-for-log (rest log)))]))
 
 (@htdd Section)
-(define-struct section (name weight dropped grades))
-;; Section is (make-section String Grade Grade (listof Grade))
+(define-struct section (name weight dropped percentages))
+;; Section is (make-section String Percentage Natural (listof Percentage))
 ;; interp. name    -> name of the section
 ;;         weight  -> total % weight of the section between 0% and 100%
 ;;         dropped -> number of lowest assignments/tests/tasks that get dropped
-;;         grades  -> student grades in the section
+;;         percentages  -> student percentages in the section
 
 (define CLICKERS (make-section "Clickers" 10 5
                                (list 0 0 50 75
@@ -73,7 +73,7 @@
   (... (section-name s)
        (section-weight s)
        (section-dropped s)
-       (fn-for-grades (section-grades s))))
+       (fn-for-percentages (section-percentages s))))
 
 ;; (listof Section)
 (define (fn-for-los los)
@@ -103,11 +103,11 @@
 
 (@htdd Section-Summary)
 (define-struct ss (name average highest lowest))
-;; Section-Summary is (make-ss String Grade Grade Grade)
+;; Section-Summary is (make-ss String Percentage Percentage Percentage)
 ;; interp. name    -> name of the section
-;;         average -> average grade of all the grades in the section
-;;         highest -> highest grade in that section
-;;         lowest  -> lowest grade in that section
+;;         average -> average percentage of all the percentages in the section
+;;         highest -> highest percentage in that section
+;;         lowest  -> lowest percentage in that section
 
 (define CLICKERSS (make-ss "Clickers" 77 100 20))
 (define LABSS (make-ss "Labs" 96.4 100 77))
@@ -134,7 +134,7 @@
 
 (@htdd Course-Summary)
 (define-struct cs (name average sections))
-;; Course-Summary is (make-cs String Grade (listof Section-Summary))
+;; Course-Summary is (make-cs String Percentage (listof Section-Summary))
 ;; interp. a course name with it's average result and results of its sections
 
 (define CPSC110S (make-cs "CPSC 110" 86.81
@@ -154,7 +154,7 @@
 
 #| Initial draft:
 
-CPSC 110    |    Grade    |      90%     |
+CPSC 110    |    Percentage    |      90%     |
 ==========================================
             | Average | Highest | Lowest |
 ------------------------------------------
@@ -221,7 +221,7 @@ Assignments |   70%   |   80%   |   40%  |
                   
      (define (fn-for-section s)
        (local [(define dropped-sorted
-                 (drop-all-lowest (sort (section-grades s) <)
+                 (drop-all-lowest (sort (section-percentages s) <)
                                   (section-dropped s)))]
          (make-ss (section-name s)
                   (/ (foldr + 0 dropped-sorted) (length dropped-sorted))
@@ -229,7 +229,7 @@ Assignments |   70%   |   80%   |   40%  |
                   (first dropped-sorted))))
  
      ;; drop is Natural
-     ;; number of lowest grades that should be dropped
+     ;; number of lowest percentages that should be dropped
      ;; log has to be sorted in increasing order
      (define (drop-all-lowest log drop)
        (cond [(empty? log) (list 0)]
@@ -290,7 +290,7 @@ Assignments |   70%   |   80%   |   40%  |
 (define VB (rectangle 3 40 "solid" "black"))
 
 (@htdf header)
-(@signature String Grade -> Image)
+(@signature String Percentage -> Image)
 ;; produce header part of the grade summary table
 ;; c is course name 
 ;; a is course average
@@ -317,7 +317,7 @@ Assignments |   70%   |   80%   |   40%  |
                           (cell 133 "white")))))
 
 (@htdf row)
-(@signature String Grade Grade Grade -> Image)
+(@signature String Percentage Percentage Percentage -> Image)
 ;; produce row part of the grade summary table
 
 ;; s is section name
@@ -350,7 +350,7 @@ Assignments |   70%   |   80%   |   40%  |
 (define (txt t) (text t 18 "black"))
 
 (@htdf grade-color)
-(@signature Grade -> String)
+(@signature Percentage -> String)
 ;; produce color of the grade
 ;; [0,  50]  produces red
 ;; (50, 75)  produces yellow
